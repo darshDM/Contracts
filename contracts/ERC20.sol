@@ -65,4 +65,13 @@ contract ERC20 is IERC20{
         emit Transfer(from,to,amount);
         return true;
     }
+
+    function _mint(address account, uint256 amount) internal {
+    if(account == address(0)){
+        revert ERC20__InvalidAddress();
+    }
+    _totalSupply = _totalSupply.add(amount);
+    _balances[account] = _balances[account].add(amount);
+    emit Transfer(address(0), account, amount);
+  }
 }
