@@ -1,4 +1,10 @@
-//SPDX-Lisence-Identifier: UNLICENSED
+// SPDX-Lisence-Identifier: UNLICENSED
+/*
+Base Source: openzeppelin
+Updated by: DarshDM
+Description: Made Gas efficient by using error-revert instead of require statements
+Solidity: ^0.8.7
+*/
 import "./Interface/IERC20.sol";
 import "./Lib/SafeMath.sol";
 pragma solidity ^0.8.7;
@@ -11,7 +17,12 @@ contract ERC20 is IERC20{
     using SafeMath for uint256;
     mapping(address => uint256) private _balances;
     mapping(address => mapping(address => uint256)) private _allowed;
-
+    string public _name;
+    string public _symbol;
+    constructor(string name,string symbol){
+        _name = name;
+        _symbol = symbol;
+    }
     uint256 private _totalSupply;
 
     function totalSupply() override external view returns(uint256){
@@ -67,11 +78,12 @@ contract ERC20 is IERC20{
     }
 
     function _mint(address account, uint256 amount) internal {
-    if(account == address(0)){
-        revert ERC20__InvalidAddress();
+        if(account == address(0)){
+            revert ERC20__InvalidAddress();
+        }
+        _totalSupply = _totalSupply.add(amount);
+        _balances[account] = _balances[account].add(amount);
+        emit Transfer(address(0), account, amount);
     }
-    _totalSupply = _totalSupply.add(amount);
-    _balances[account] = _balances[account].add(amount);
-    emit Transfer(address(0), account, amount);
-  }
+    
 }
